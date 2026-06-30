@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XyziroBot — Jasa Sewa Bot Jaga Grup</title>
+<style>
+  :root{
+    --bg-0:#050b1c;
+    --bg-1:#0a1330;
+    --bg-2:#0e1a40;
+    --panel:#101c45;
+    --panel-line:#22305f;
+    --blue-1:#2e6bff;
+    --blue-2:#5b9bff;
+    --blue-glow:#3f7dff;
+    --ink-0:#f3f6ff;
+    --ink-1:#aab6e0;
+    --ink-2:#7484b8;
+    --green:#36d399;
+    --amber:#ffb547;
+    --radius:18px;
+    --serif: "Fraunces", "Iowan Old Style", Georgia, serif;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  @font-face{
+    font-family:"Fraunces";
+    src: local("Georgia");
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:
+      radial-gradient(ellipse 1200px 700px at 15% -10%, rgba(46,107,255,.18), transparent 60%),
+      radial-gradient(ellipse 900px 600px at 110% 10%, rgba(91,155,255,.12), transparent 55%),
+      var(--bg-0);
+    color:var(--ink-0);
+    font-family:var(--sans);
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+
+  a{color:inherit; text-decoration:none;}
+
+  ::selection{background:var(--blue-1); color:#fff;}
+
+  /* ---------- Background grid texture ---------- */
+  .grid-texture{
+    position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.35;
+    background-image:
+      linear-gradient(rgba(91,155,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(91,155,255,.05) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 800px 600px at 20% 10%, black, transparent 70%);
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(5,11,28,.78);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(91,155,255,.12);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 0;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-weight:700; font-size:1.05rem; letter-spacing:.01em;
+  }
+  .brand svg{width:30px; height:30px; flex-shrink:0;}
+  .brand .dot{color:var(--blue-2);}
+  .navlinks{
+    display:flex; gap:34px; align-items:center;
+    font-size:.92rem; color:var(--ink-1);
+  }
+  .navlinks a{transition:color .2s;}
+  .navlinks a:hover{color:var(--ink-0);}
+  .nav-cta{
+    display:flex; align-items:center; gap:5px;
+    background:linear-gradient(135deg, var(--blue-1), var(--blue-2));
+    color:#fff; padding:7px 14px; border-radius:999px;
+    font-weight:600; font-size:.76rem;
+    box-shadow:0 6px 18px -8px rgba(46,107,255,.6);
+    transition:transform .2s, box-shadow .2s;
+  }
+  .nav-cta svg{width:13px; height:13px;}
+  .nav-cta:hover{transform:translateY(-1px); box-shadow:0 10px 22px -8px rgba(46,107,255,.75);}
+  .nav-toggle{display:none;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative; z-index:1;
+    padding:84px 0 60px;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:.74rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--blue-2); background:rgba(46,107,255,.1); border:1px solid rgba(91,155,255,.25);
+    padding:7px 14px; border-radius:999px; margin-bottom:24px;
+  }
+  .eyebrow svg{width:13px; height:13px;}
+  .pulse-dot{
+    width:6px; height:6px; border-radius:50%; background:var(--green);
+    box-shadow:0 0 0 0 rgba(54,211,153,.6);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(54,211,153,.55);}
+    70%{box-shadow:0 0 0 8px rgba(54,211,153,0);}
+    100%{box-shadow:0 0 0 0 rgba(54,211,153,0);}
+  }
+
+  .hero h1{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:clamp(2.6rem, 4.6vw, 4.1rem);
+    line-height:1.04;
+    letter-spacing:-.01em;
+    margin-bottom:24px;
+  }
+  .hero h1 .accent{
+    background:linear-gradient(135deg, var(--blue-2), #8fc1ff);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero p.lead{
+    font-size:1.08rem; color:var(--ink-1); max-width:480px; margin-bottom:34px;
+  }
+
+  .hero-actions{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:46px;}
+  .btn-primary{
+    display:inline-flex; align-items:center; gap:10px;
+    background:linear-gradient(135deg, var(--blue-1), #4a82ff);
+    color:#fff; font-weight:600; font-size:.95rem;
+    padding:15px 26px; border-radius:12px;
+    box-shadow:0 14px 30px -10px rgba(46,107,255,.65);
+    border:1px solid rgba(255,255,255,.08);
+    transition:transform .2s, box-shadow .2s;
+    cursor:pointer;
+  }
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 18px 34px -10px rgba(46,107,255,.8);}
+  .btn-primary svg{width:18px; height:18px;}
+  .btn-secondary{
+    display:inline-flex; align-items:center; gap:10px;
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--panel-line);
+    color:var(--ink-0); font-weight:600; font-size:.95rem;
+    padding:15px 24px; border-radius:12px;
+    transition:background .2s, border-color .2s;
+  }
+  .btn-secondary:hover{background:rgba(91,155,255,.08); border-color:rgba(91,155,255,.35);}
+  .btn-secondary svg{width:18px; height:18px;}
+
+  .trust-row{
+    display:flex; gap:28px; flex-wrap:wrap;
+  }
+  .trust-item{display:flex; align-items:center; gap:10px; font-size:.84rem; color:var(--ink-1);}
+  .trust-item .icon-box{
+    width:34px; height:34px; border-radius:9px;
+    background:rgba(46,107,255,.12); border:1px solid rgba(91,155,255,.22);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .trust-item svg{width:17px; height:17px; color:var(--blue-2);}
+  .trust-item strong{color:var(--ink-0); display:block; font-size:.92rem;}
+
+  /* ---------- Hero visual: chat panel + bot ---------- */
+  .hero-visual{position:relative; min-height:560px;}
+
+  .shield-badge{
+    position:absolute; top:-6px; left:36%; z-index:3;
+    width:84px; height:84px;
+    animation:float 5s ease-in-out infinite;
+  }
+  @keyframes float{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-10px);}
+  }
+
+  .phone-panel{
+    position:relative; z-index:1;
+    width:340px; margin:54px 0 0 auto;
+    background:linear-gradient(180deg, #0c1632, #0a1226);
+    border:1px solid rgba(91,155,255,.18);
+    border-radius:26px;
+    padding:0;
+    box-shadow:0 40px 90px -30px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.02) inset;
+    overflow:hidden;
+  }
+  .phone-head{
+    display:flex; align-items:center; gap:12px;
+    padding:18px 18px 16px;
+    border-bottom:1px solid rgba(91,155,255,.1);
+  }
+  .phone-head .grp-icon{
+    width:38px; height:38px; border-radius:50%;
+    background:linear-gradient(135deg, var(--blue-1), #5b9bff);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .phone-head .grp-icon svg{width:18px; height:18px; color:#fff;}
+  .phone-head .grp-name{font-weight:700; font-size:.92rem;}
+  .phone-head .grp-sub{font-size:.74rem; color:var(--ink-2);}
+  .phone-head .more{margin-left:auto; color:var(--ink-2);}
+  .phone-head .more svg{width:18px; height:18px;}
+
+  .phone-body{padding:16px;}
+  .msg-card{
+    display:flex; gap:12px; align-items:flex-start;
+    background:rgba(255,255,255,.025);
+    border:1px solid rgba(255,255,255,.05);
+    border-radius:13px;
+    padding:13px 14px; margin-bottom:11px;
+  }
+  .msg-icon{
+    width:30px; height:30px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .msg-icon svg{width:15px; height:15px; color:#fff;}
+  .msg-icon.ok{background:var(--green);}
+  .msg-icon.shield{background:var(--blue-1);}
+  .msg-icon.warn{background:var(--amber);}
+  .msg-icon.bot{background:var(--green);}
+  .msg-title{font-weight:700; font-size:.84rem; margin-bottom:2px;}
+  .msg-text{font-size:.78rem; color:var(--ink-2); line-height:1.4;}
+  .msg-tag{
+    margin-left:auto; font-size:.62rem; font-weight:700; letter-spacing:.05em;
+    background:rgba(46,107,255,.18); color:var(--blue-2);
+    padding:3px 8px; border-radius:6px; flex-shrink:0;
+  }
+
+  .bubble-pop{
+    position:absolute; top:36px; right:-6px; z-index:3;
+    width:108px; padding:14px;
+    background:linear-gradient(135deg, var(--blue-1), #5b9bff);
+    border-radius:18px 18px 4px 18px;
+    display:flex; gap:5px; align-items:center; justify-content:center;
+    box-shadow:0 16px 34px -12px rgba(46,107,255,.7);
+  }
+  .bubble-pop span{width:7px; height:7px; border-radius:50%; background:#fff; opacity:.9;}
+
+  .bot-figure{
+    position:absolute; right:6px; bottom:-10px; z-index:2;
+    width:230px;
+  }
+
+  .lock-chip, .people-chip{
+    position:absolute; z-index:3;
+    width:58px; height:58px; border-radius:50%;
+    background:rgba(15,25,60,.9);
+    border:1px solid rgba(91,155,255,.25);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 26px -10px rgba(0,0,0,.6);
+  }
+  .lock-chip{right:14px; bottom:-2px;}
+  .lock-chip svg{width:24px; height:24px; color:var(--blue-2);}
+  .people-chip{left:0; bottom:46px;}
+  .people-chip svg{width:24px; height:24px; color:var(--blue-2);}
+
+  /* ---------- Section shared ---------- */
+  section{position:relative; z-index:1; padding:92px 0;}
+  .section-head{max-width:620px; margin-bottom:56px;}
+  .section-eyebrow{
+    font-family:var(--mono); font-size:.74rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--blue-2); margin-bottom:14px; display:block;
+  }
+  .section-head h2{
+    font-family:var(--serif); font-weight:600;
+    font-size:clamp(1.9rem, 3vw, 2.6rem); line-height:1.12; margin-bottom:14px;
+  }
+  .section-head p{color:var(--ink-1); font-size:1rem;}
+
+  /* ---------- Logos / stats strip ---------- */
+  .stats-strip{
+    border-top:1px solid rgba(91,155,255,.1);
+    border-bottom:1px solid rgba(91,155,255,.1);
+    padding:36px 0;
+  }
+  .stats-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:24px; text-align:center;
+  }
+  .stat-num{
+    font-family:var(--serif); font-size:2.1rem; font-weight:600; color:var(--ink-0);
+  }
+  .stat-label{font-size:.82rem; color:var(--ink-2); margin-top:4px;}
+
+  /* ---------- Features ---------- */
+  .feat-grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:22px;
+  }
+  .feat-card{
+    background:linear-gradient(180deg, rgba(16,28,69,.6), rgba(10,19,48,.5));
+    border:1px solid var(--panel-line);
+    border-radius:var(--radius);
+    padding:30px 26px;
+    transition:transform .25s, border-color .25s, background .25s;
+  }
+  .feat-card:hover{
+    transform:translateY(-4px);
+    border-color:rgba(91,155,255,.4);
+    background:linear-gradient(180deg, rgba(20,34,82,.7), rgba(10,19,48,.6));
+  }
+  .feat-icon{
+    width:50px; height:50px; border-radius:13px;
+    background:rgba(46,107,255,.14); border:1px solid rgba(91,155,255,.25);
+    display:flex; align-items:center; justify-content:center; margin-bottom:20px;
+  }
+  .feat-icon svg{width:24px; height:24px; color:var(--blue-2);}
+  .feat-card h3{font-size:1.06rem; font-weight:700; margin-bottom:10px;}
+  .feat-card p{font-size:.88rem; color:var(--ink-1); line-height:1.6;}
+
+  /* ---------- How it works ---------- */
+  .steps{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:0; position:relative;
+  }
+  .steps::before{
+    content:"";
+    position:absolute; top:25px; left:12.5%; right:12.5%; height:1px;
+    background:repeating-linear-gradient(90deg, var(--panel-line) 0 8px, transparent 8px 16px);
+  }
+  .step{position:relative; padding:0 16px; text-align:left;}
+  .step-num{
+    width:50px; height:50px; border-radius:50%;
+    background:var(--bg-0); border:1px solid rgba(91,155,255,.35);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-weight:700; color:var(--blue-2); font-size:.95rem;
+    margin-bottom:22px; position:relative; z-index:1;
+  }
+  .step h4{font-size:.98rem; font-weight:700; margin-bottom:8px;}
+  .step p{font-size:.84rem; color:var(--ink-2); line-height:1.55;}
+
+  .price-grid-4{grid-template-columns:repeat(4, 1fr);}
+  .price-grid-4 .price-card{padding:28px 22px;}
+  .price-grid-4 .price-amount .num{font-size:1.95rem;}
+  .price-grid-4 .price-name{font-size:.96rem;}
+
+  .public-group-cta{
+    margin-top:36px;
+    display:flex; align-items:center; gap:22px;
+    background:linear-gradient(135deg, rgba(37,211,102,.1), rgba(16,28,69,.5));
+    border:1px solid rgba(37,211,102,.3);
+    border-radius:var(--radius);
+    padding:24px 28px;
+  }
+  .pgc-icon{
+    width:50px; height:50px; border-radius:13px; flex-shrink:0;
+    background:rgba(37,211,102,.16); border:1px solid rgba(37,211,102,.35);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .pgc-icon svg{width:24px; height:24px; color:#3fe888;}
+  .pgc-text{flex-grow:1;}
+  .pgc-text h4{font-size:1rem; font-weight:700; margin-bottom:4px;}
+  .pgc-text p{font-size:.86rem; color:var(--ink-2); line-height:1.5;}
+  .pgc-btn{
+    display:flex; align-items:center; gap:8px; flex-shrink:0;
+    background:linear-gradient(135deg, #25d366, #1fb959);
+    color:#fff; font-weight:700; font-size:.88rem;
+    padding:13px 22px; border-radius:11px;
+    box-shadow:0 14px 28px -10px rgba(37,211,102,.55);
+    transition:transform .2s, box-shadow .2s;
+  }
+  .pgc-btn svg{width:17px; height:17px;}
+  .pgc-btn:hover{transform:translateY(-2px); box-shadow:0 18px 32px -10px rgba(37,211,102,.7);}
+
+  /* ---------- Pricing ---------- */
+  .price-grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:22px; align-items:stretch;
+  }
+  .price-card{
+    background:linear-gradient(180deg, rgba(16,28,69,.55), rgba(10,19,48,.45));
+    border:1px solid var(--panel-line);
+    border-radius:var(--radius);
+    padding:34px 28px;
+    display:flex; flex-direction:column;
+    transition:transform .25s, border-color .25s;
+  }
+  .price-card:hover{transform:translateY(-4px); border-color:rgba(91,155,255,.35);}
+  .price-card.featured{
+    border-color:var(--blue-1);
+    background:linear-gradient(180deg, rgba(46,107,255,.14), rgba(10,19,48,.5));
+    position:relative;
+    box-shadow:0 30px 60px -24px rgba(46,107,255,.4);
+  }
+  .price-card.featured:hover{transform:translateY(-6px);}
+  .price-tag{
+    position:absolute; top:-13px; left:28px;
+    background:linear-gradient(135deg, var(--blue-1), var(--blue-2));
+    color:#fff; font-size:.7rem; font-weight:700; letter-spacing:.04em;
+    padding:5px 13px; border-radius:999px; text-transform:uppercase;
+  }
+  .price-name{font-size:1.02rem; font-weight:700; margin-bottom:6px;}
+  .price-desc{font-size:.83rem; color:var(--ink-2); margin-bottom:22px;}
+  .price-amount{display:flex; align-items:baseline; gap:6px; margin-bottom:26px;}
+  .price-amount .num{font-family:var(--serif); font-size:2.3rem; font-weight:600;}
+  .price-amount .per{font-size:.85rem; color:var(--ink-2);}
+  .price-list{list-style:none; margin-bottom:28px; flex-grow:1;}
+  .price-list li{
+    display:flex; align-items:flex-start; gap:10px;
+    font-size:.87rem; color:var(--ink-1); padding:8px 0;
+    border-top:1px solid rgba(255,255,255,.05);
+  }
+  .price-list li:first-child{border-top:none;}
+  .price-list svg{width:16px; height:16px; color:var(--green); flex-shrink:0; margin-top:2px;}
+
+  /* --- Improved order buttons --- */
+  .price-btn{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    text-align:center; padding:14px; border-radius:11px;
+    font-weight:700; font-size:.92rem;
+    background:rgba(255,255,255,.05); border:1px solid var(--panel-line);
+    color:var(--ink-0);
+    transition:background .2s, border-color .2s, transform .2s, box-shadow .2s;
+    cursor:pointer;
+  }
+  .price-btn svg{width:17px; height:17px; flex-shrink:0;}
+  .price-btn:hover{
+    background:rgba(91,155,255,.14); border-color:rgba(91,155,255,.45);
+    transform:translateY(-2px);
+  }
+  .price-card.featured .price-btn{
+    background:linear-gradient(135deg, #25d366, #1fb959);
+    border:none; color:#fff;
+    box-shadow:0 14px 30px -10px rgba(37,211,102,.55);
+  }
+  .price-card.featured .price-btn:hover{
+    box-shadow:0 18px 36px -10px rgba(37,211,102,.7);
+    transform:translateY(-3px);
+  }
+  .price-card:not(.featured) .price-btn{
+    background:rgba(37,211,102,.1);
+    border:1px solid rgba(37,211,102,.35);
+    color:#3fe888;
+  }
+  .price-card:not(.featured) .price-btn:hover{
+    background:rgba(37,211,102,.18);
+    border-color:rgba(37,211,102,.55);
+  }
+  .price-note{
+    text-align:center; font-size:.74rem; color:var(--ink-2); margin-top:10px;
+    display:flex; align-items:center; justify-content:center; gap:5px;
+  }
+  .price-note svg{width:13px; height:13px; color:var(--green); flex-shrink:0;}
+
+  /* ---------- Command reference panel ---------- */
+  .cmd-section .wrap{
+    display:grid; grid-template-columns:.85fr 1.15fr; gap:50px; align-items:center;
+  }
+  .cmd-panel{
+    background:#080e22; border:1px solid var(--panel-line); border-radius:16px;
+    overflow:hidden; box-shadow:0 30px 70px -28px rgba(0,0,0,.7);
+  }
+  .cmd-bar{
+    display:flex; align-items:center; gap:8px; padding:13px 16px;
+    border-bottom:1px solid rgba(91,155,255,.1); background:rgba(91,155,255,.04);
+  }
+  .cmd-bar span{width:10px; height:10px; border-radius:50%;}
+  .cmd-bar span:nth-child(1){background:#ff5f56;}
+  .cmd-bar span:nth-child(2){background:#ffbd2e;}
+  .cmd-bar span:nth-child(3){background:#27c93f;}
+  .cmd-bar .cmd-title{margin-left:8px; font-family:var(--mono); font-size:.74rem; color:var(--ink-2);}
+  .cmd-body{padding:22px 22px 26px; font-family:var(--mono); font-size:.84rem; line-height:1.9;}
+  .cmd-line{color:var(--ink-2);}
+  .cmd-line .cmd{color:var(--blue-2);}
+  .cmd-line .arg{color:var(--ink-0);}
+  .cmd-line .out{color:var(--green); display:block; padding-left:18px;}
+
+  .feature-list-alt{list-style:none;}
+  .feature-list-alt li{
+    display:flex; gap:16px; padding:20px 0;
+    border-top:1px solid rgba(255,255,255,.06);
+  }
+  .feature-list-alt li:first-child{border-top:none; padding-top:0;}
+  .feature-list-alt .num{
+    font-family:var(--mono); color:var(--blue-2); font-size:.85rem; font-weight:700;
+    width:30px; flex-shrink:0; padding-top:2px;
+  }
+  .feature-list-alt h4{font-size:.98rem; font-weight:700; margin-bottom:6px;}
+  .feature-list-alt p{font-size:.86rem; color:var(--ink-2); line-height:1.6;}
+
+  /* ---------- Testimonials ---------- */
+  .testi-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:22px;}
+  .testi-card{
+    background:linear-gradient(180deg, rgba(16,28,69,.5), rgba(10,19,48,.4));
+    border:1px solid var(--panel-line); border-radius:var(--radius);
+    padding:28px;
+  }
+  .testi-stars{display:flex; gap:3px; margin-bottom:16px;}
+  .testi-stars svg{width:15px; height:15px; color:var(--amber);}
+  .testi-card p{font-size:.92rem; color:var(--ink-1); line-height:1.65; margin-bottom:20px;}
+  .testi-person{display:flex; align-items:center; gap:12px;}
+  .testi-avatar{
+    width:38px; height:38px; border-radius:50%;
+    background:linear-gradient(135deg, var(--blue-1), var(--blue-2));
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:.85rem; color:#fff;
+  }
+  .testi-name{font-size:.86rem; font-weight:700;}
+  .testi-role{font-size:.76rem; color:var(--ink-2);}
+
+  /* ---------- FAQ ---------- */
+  .faq-list{max-width:760px;}
+  .faq-item{
+    border-bottom:1px solid var(--panel-line);
+  }
+  .faq-q{
+    display:flex; align-items:center; justify-content:space-between; gap:20px;
+    padding:22px 4px; cursor:pointer; font-weight:600; font-size:.98rem;
+  }
+  .faq-q svg{width:18px; height:18px; color:var(--blue-2); flex-shrink:0; transition:transform .25s;}
+  .faq-item.open .faq-q svg{transform:rotate(45deg);}
+  .faq-a{
+    max-height:0; overflow:hidden; transition:max-height .3s ease;
+  }
+  .faq-item.open .faq-a{max-height:200px;}
+  .faq-a p{padding:0 4px 22px; font-size:.88rem; color:var(--ink-2); line-height:1.65; max-width:640px;}
+
+  /* ---------- CTA banner ---------- */
+  .cta-banner{
+    position:relative; z-index:1;
+    margin:0 auto; max-width:1180px;
+    border-radius:28px;
+    padding:64px 56px;
+    background:
+      radial-gradient(ellipse 600px 300px at 80% 0%, rgba(91,155,255,.35), transparent 70%),
+      linear-gradient(135deg, #0c1a44, #0a1230);
+    border:1px solid rgba(91,155,255,.25);
+    display:flex; align-items:center; justify-content:space-between; gap:40px;
+    overflow:hidden;
+  }
+  .cta-banner::after{
+    content:"";
+    position:absolute; right:-60px; top:-60px; width:260px; height:260px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(91,155,255,.25), transparent 70%);
+  }
+  .cta-text h2{
+    font-family:var(--serif); font-size:clamp(1.7rem, 2.6vw, 2.3rem); font-weight:600; margin-bottom:12px;
+  }
+  .cta-text p{color:var(--ink-1); font-size:.96rem; max-width:420px;}
+  .cta-actions{display:flex; flex-direction:column; gap:12px; flex-shrink:0;}
+
+  /* ---------- Footer ---------- */
+  footer{padding:64px 0 36px; position:relative; z-index:1;}
+  .footer-grid{
+    display:grid; grid-template-columns:1.3fr 1fr 1fr 1fr; gap:40px;
+    padding-bottom:40px; border-bottom:1px solid var(--panel-line);
+  }
+  .footer-brand .brand{margin-bottom:14px;}
+  .footer-brand p{font-size:.86rem; color:var(--ink-2); max-width:280px; line-height:1.6;}
+  .footer-col h5{font-size:.82rem; font-weight:700; margin-bottom:16px; color:var(--ink-0);}
+  .footer-col ul{list-style:none;}
+  .footer-col li{margin-bottom:11px;}
+  .footer-col a{font-size:.85rem; color:var(--ink-2); transition:color .2s;}
+  .footer-col a:hover{color:var(--blue-2);}
+  .footer-bottom{
+    display:flex; justify-content:space-between; align-items:center;
+    padding-top:28px; font-size:.8rem; color:var(--ink-2);
+  }
+  .footer-social{display:flex; gap:12px;}
+  .footer-social a{
+    width:36px; height:36px; border-radius:9px;
+    background:rgba(255,255,255,.04); border:1px solid var(--panel-line);
+    display:flex; align-items:center; justify-content:center;
+    transition:background .2s, border-color .2s;
+  }
+  .footer-social a:hover{background:rgba(91,155,255,.12); border-color:rgba(91,155,255,.35);}
+  .footer-social svg{width:16px; height:16px; color:var(--ink-1);}
+
+  /* ---------- Floating WhatsApp button ---------- */
+  .float-wa{
+    position:fixed; right:24px; bottom:24px; z-index:60;
+    width:58px; height:58px; border-radius:50%;
+    background:linear-gradient(135deg, #25d366, #1fb959);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 14px 32px -8px rgba(37,211,102,.7);
+    border:1px solid rgba(255,255,255,.15);
+    transition:transform .2s, box-shadow .2s;
+  }
+  .float-wa:hover{transform:translateY(-3px) scale(1.04); box-shadow:0 18px 38px -8px rgba(37,211,102,.8);}
+  .float-wa svg{width:28px; height:28px; color:#fff;}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 980px){
+    .hero-grid{grid-template-columns:1fr;}
+    .hero-visual{margin-top:30px; min-height:480px;}
+    .feat-grid, .price-grid, .testi-grid{grid-template-columns:repeat(2,1fr);}
+    .price-grid-4{grid-template-columns:repeat(2,1fr);}
+    .steps{grid-template-columns:repeat(2,1fr); row-gap:36px;}
+    .steps::before{display:none;}
+    .stats-grid{grid-template-columns:repeat(2,1fr); row-gap:24px;}
+    .cmd-section .wrap{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+    .navlinks{display:none;}
+    .public-group-cta{flex-direction:column; align-items:flex-start; text-align:left;}
+    .pgc-btn{width:100%; justify-content:center;}
+  }
+  @media (max-width: 640px){
+    .feat-grid, .price-grid, .testi-grid, .steps{grid-template-columns:1fr;}
+    .price-grid-4{grid-template-columns:1fr;}
+    .cta-banner{flex-direction:column; align-items:flex-start; padding:42px 28px;}
+    .footer-grid{grid-template-columns:1fr;}
+    .footer-bottom{flex-direction:column; gap:16px; align-items:flex-start;}
+    .phone-panel{width:100%; margin-top:30px;}
+    .bot-figure{width:170px;}
+    .float-wa{right:16px; bottom:16px; width:52px; height:52px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-texture"></div>
+
+<!-- ================= HEADER ================= -->
+<header>
+  <div class="wrap nav">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L4 5V11C4 16.5 7.4 20.7 12 22C16.6 20.7 20 16.5 20 11V5L12 2Z" fill="url(#gradShield)" stroke="#5b9bff" stroke-width="1"/>
+        <path d="M8.5 12L11 14.5L16 9" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="gradShield" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#2e6bff"/>
+            <stop offset="1" stop-color="#5b9bff"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      XyziroBot<span class="dot">Tempat sewa bot terpercaya</span>
+    </div>
+    <nav class="navlinks">
+      <a href="#fitur">Fitur</a>
+      <a href="#cara-kerja">Cara Kerja</a>
+      <a href="#harga">Harga</a>
+      <a href="#testimoni">Testimoni</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a href="#harga" class="nav-cta">
+      Sewa Sekarang
+      <svg viewBox="0 0 24 24" fill="none"><path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">
+        <span class="pulse-dot"></span>
+        Aktif &amp; berjaga 24/7
+      </span>
+      <h1>Sewa Bot<br><span class="accent">Jaga Grup</span><br>Aman &amp; Tertib</h1>
+      <p class="lead">Grup Telegram atau WhatsApp kamu dijaga otomatis dari spam, link promosi liar, dan member iseng — tanpa admin harus pantau layar 24 jam.</p>
+
+      <div class="hero-actions">
+        <a href="#harga" class="btn-primary">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L4 5V11C4 16.5 7.4 20.7 12 22C16.6 20.7 20 16.5 20 11V5L12 2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 12L11 14.5L16 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Pasang Bot di Grup Saya
+        </a>
+        <a href="#cara-kerja" class="btn-secondary">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M10 9L15 12L10 15V9Z" fill="currentColor"/></svg>
+          Lihat Cara Kerja
+        </a>
+      </div>
+
+      <div class="trust-row">
+        <div class="trust-item">
+          <span class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M3 12C3 12 6 5 12 5C18 5 21 12 21 12C21 12 18 19 12 19C6 19 3 12 3 12Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" stroke="currentColor" stroke-width="1.6"/></svg>
+          </span>
+          <span><strong>Real-time</strong>Filter spam instan</span>
+        </div>
+        <div class="trust-item">
+          <span class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7V12L15.5 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </span>
+          <span><strong>24/7</strong>Tanpa jam istirahat</span>
+        </div>
+        <div class="trust-item">
+          <span class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 21C12 21 4 16.5 4 10.5C4 7.5 6.5 5.5 9 5.5C10.5 5.5 11.5 6.3 12 7C12.5 6.3 13.5 5.5 15 5.5C17.5 5.5 20 7.5 20 10.5C20 16.5 12 21 12 21Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          </span>
+          <span><strong>500+</strong>Grup terpercaya</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <svg class="shield-badge" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2L4 5V11C4 16.5 7.4 20.7 12 22C16.6 20.7 20 16.5 20 11V5L12 2Z" fill="#0c1a44" stroke="#5b9bff" stroke-width="1.2"/>
+        <path d="M8.5 12L11 14.5L16 9" stroke="#5b9bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+
+      <div class="bubble-pop">
+        <span></span><span></span><span></span>
+      </div>
+
+      <div class="phone-panel">
+        <div class="phone-head">
+          <span class="grp-icon">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M16 21V19C16 16.79 14.21 15 12 15H6C3.79 15 2 16.79 2 19V21" stroke="white" stroke-width="1.7" stroke-linecap="round"/><circle cx="9" cy="8" r="4" stroke="white" stroke-width="1.7"/><path d="M22 21V19C22 17.13 20.73 15.56 19 15.11" stroke="white" stroke-width="1.7" stroke-linecap="round"/><path d="M16 4.13C17.73 4.59 19 6.15 19 8C19 9.85 17.73 11.41 16 11.87" stroke="white" stroke-width="1.7" stroke-linecap="round"/></svg>
+          </span>
+          <div>
+            <div class="grp-name">ROOM PUBLIC X GB MAIN BOT</div>
+            <div class="grp-sub">ADMIN HANYA 1 ORANG</div>
+          </div>
+          <span class="more">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="19" r="1.4" fill="currentColor"/></svg>
+          </span>
+        </div>
+        <div class="phone-body">
+          <div class="msg-card">
+            <span class="msg-icon ok">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <div>
+              <div class="msg-title">Welcome!</div>
+              <div class="msg-text">Selamat datang di grup! Jaga ketertiban ya.</div>
+            </div>
+          </div>
+          <div class="msg-card">
+            <span class="msg-icon shield">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L4 5V11C4 16.5 7.4 20.7 12 22C16.6 20.7 20 16.5 20 11V5L12 2Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            </span>
+            <div>
+              <div class="msg-title">Anti Spam</div>
+              <div class="msg-text">Tidak ada spam atau promosi.</div>
+            </div>
+          </div>
+          <div class="msg-card">
+            <span class="msg-icon warn">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 9V13" stroke="#1a1200" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.2" r="0.9" fill="#1a1200"/><path d="M10.3 4.5C11 3.2 13 3.2 13.7 4.5L20.5 17.3C21.2 18.6 20.3 20.1 18.8 20.1H5.2C3.7 20.1 2.8 18.6 3.5 17.3L10.3 4.5Z" stroke="#1a1200" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            </span>
+            <div>
+              <div class="msg-title">Peringatan</div>
+              <div class="msg-text">Jangan kirim konten yang melanggar rules!</div>
+            </div>
+          </div>
+          <div class="msg-card">
+            <span class="msg-icon bot">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <div>
+              <div class="msg-title">Bot Jaga Grup</div>
+              <div class="msg-text">Aktif 24/7</div>
+            </div>
+            <span class="msg-tag">BOT</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="people-chip">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M16 21V19C16 16.79 14.21 15 12 15H6C3.79 15 2 16.79 2 19V21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="9" cy="8" r="4" stroke="currentColor" stroke-width="1.7"/></svg>
+      </div>
+
+      <svg class="bot-figure" viewBox="0 0 200 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="14" r="5" fill="#5b9bff"/>
+        <line x1="100" y1="19" x2="100" y2="40" stroke="#5b9bff" stroke-width="3"/>
+        <rect x="46" y="40" width="108" height="86" rx="30" fill="url(#headGrad)" stroke="#3a64d8" stroke-width="2"/>
+        <rect x="62" y="58" width="76" height="48" rx="20" fill="#081226"/>
+        <ellipse cx="84" cy="82" rx="7" ry="10" fill="#5fd3ff"/>
+        <ellipse cx="116" cy="82" rx="7" ry="10" fill="#5fd3ff"/>
+        <path d="M92 96Q100 102 108 96" stroke="#5fd3ff" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+        <rect x="34" y="64" width="12" height="26" rx="6" fill="#3a64d8"/>
+        <rect x="154" y="64" width="12" height="26" rx="6" fill="#3a64d8"/>
+        <rect x="60" y="120" width="80" height="70" rx="26" fill="url(#bodyGrad)" stroke="#3a64d8" stroke-width="2"/>
+        <path d="M100 92L120 150L80 150Z" fill="#5b9bff" opacity="0.35" transform="rotate(180 100 121)"/>
+        <path d="M40 150C40 150 36 175 50 192C58 200 64 195 64 190L52 158Z" fill="url(#bodyGrad)" stroke="#3a64d8" stroke-width="2"/>
+        <path d="M160 150C160 150 164 175 150 192C142 200 136 195 136 190L148 158Z" fill="url(#bodyGrad)" stroke="#3a64d8" stroke-width="2"/>
+        <path d="M30 145L25 110L40 105L50 140Z" fill="#5b9bff" stroke="#2e6bff" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M125 200L100 215C100 215 130 220 145 200C150 192 152 175 150 165L120 175Z" fill="#2e6bff" stroke="#5b9bff" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M133 178L138 188L150 174" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="headGrad" x1="46" y1="40" x2="154" y2="126" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#eef3ff"/>
+            <stop offset="1" stop-color="#c4d3f5"/>
+          </linearGradient>
+          <linearGradient id="bodyGrad" x1="40" y1="120" x2="160" y2="200" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#eef3ff"/>
+            <stop offset="1" stop-color="#b9caf2"/>
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <div class="lock-chip">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 11V7.5C8 5 9.8 3 12 3C14.2 3 16 5 16 7.5V11" stroke="currentColor" stroke-width="1.8"/></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STATS STRIP ================= -->
+<section class="stats-strip" style="padding:36px 0;">
+  <div class="wrap stats-grid">
+    <div>
+      <div class="stat-num">500+</div>
+      <div class="stat-label">Grup terpasang</div>
+    </div>
+    <div>
+      <div class="stat-num">2.1jt</div>
+      <div class="stat-label">Pesan spam diblokir</div>
+    </div>
+    <div>
+      <div class="stat-num">24/7</div>
+      <div class="stat-label">Bot selalu standby</div>
+    </div>
+    <div>
+      <div class="stat-num">&lt;1dtk</div>
+      <div class="stat-label">Waktu respon filter</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FITUR ================= -->
+<section id="fitur">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-eyebrow">Fitur Utama</span>
+      <h2>Satu bot, semua urusan keamanan grup beres</h2>
+      <p>Dari menyaring spam sampai mengelola member baru — semua berjalan otomatis di latar belakang.</p>
+    </div>
+
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L4 5V11C4 16.5 7.4 20.7 12 22C16.6 20.7 20 16.5 20 11V5L12 2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Anti Spam &amp; Link Liar</h3>
+        <p>Mendeteksi dan menghapus otomatis pesan promosi, link mencurigakan, dan forward berulang sebelum mengganggu member lain.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M16 21V19C16 16.79 14.21 15 12 15H6C3.79 15 2 16.79 2 19V21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="9" cy="8" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M22 21V19C22 17.13 20.73 15.56 19 15.11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M16 4.13C17.73 4.59 19 6.15 19 8C19 9.85 17.73 11.41 16 11.87" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Sambutan Member Baru</h3>
+        <p>Pesan selamat datang otomatis lengkap dengan aturan grup, supaya member baru langsung paham tata tertib sejak masuk.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M10 9L15 12L10 15V9Z" fill="currentColor"/><rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" stroke-width="1.6"/></svg>
+        </div>
+        <h3>Filter Kata Kasar</h3>
+        <p>Daftar kata terlarang bisa disesuaikan sendiri. Pesan yang melanggar otomatis terhapus dan pengirim mendapat peringatan.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/></svg>
+        </div>
+        <h3>Sistem Peringatan Bertingkat</h3>
+        <p>Pelanggaran ringan diberi peringatan, pelanggaran berulang otomatis dikeluarkan — tanpa admin perlu turun tangan manual.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7V12L15.5 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Laporan Aktivitas Harian</h3>
+        <p>Ringkasan otomatis berapa pesan diblokir, member keluar-masuk, dan kejadian penting lain, dikirim langsung ke admin.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 7H20M4 12H20M4 17H14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Atur Lewat Perintah Singkat</h3>
+        <p>Semua pengaturan — dari jadwal silent, daftar kata terlarang, sampai mode khusus event — cukup lewat satu baris perintah.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CARA KERJA ================= -->
+<section id="cara-kerja" style="border-top:1px solid var(--panel-line); border-bottom:1px solid var(--panel-line);">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-eyebrow">Cara Kerja</span>
+      <h2>Pasang dalam 4 langkah, bot langsung berjaga</h2>
+      <p>Tidak perlu keahlian teknis. Proses pemasangan biasanya selesai kurang dari 10 menit.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h4>Pilih Paket</h4>
+        <p>Tentukan paket sesuai jumlah grup dan kebutuhan fitur yang ingin diaktifkan.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h4>Tambahkan Bot</h4>
+        <p>Kami kirim tautan undangan bot. Admin tinggal jadikan bot sebagai administrator grup.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h4>Atur Aturan</h4>
+        <p>Sesuaikan kata terlarang, pesan sambutan, dan tingkat ketegasan filter sesuai grup kamu.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h4>Bot Aktif 24/7</h4>
+        <p>Selesai. Bot mulai menjaga grup secara otomatis, kapan pun, tanpa perlu dipantau terus.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PERINTAH / CMD PANEL ================= -->
+<section class="cmd-section">
+  <div class="wrap">
+    <div>
+      <span class="section-eyebrow">Kontrol Penuh</span>
+      <h2 style="font-family:var(--serif); font-weight:600; font-size:clamp(1.8rem,2.6vw,2.3rem); margin-bottom:30px;">Atur semua lewat perintah sederhana</h2>
+
+      <ul class="feature-list-alt">
+        <li>
+          <span class="num">01</span>
+          <div>
+            <h4>Aktifkan mode senyap</h4>
+            <p>Bisukan grup sementara saat jam tertentu tanpa harus mengubah pengaturan satu per satu secara manual.</p>
+          </div>
+        </li>
+        <li>
+          <span class="num">02</span>
+          <div>
+            <h4>Kelola daftar kata terlarang</h4>
+            <p>Tambah atau hapus kata yang ingin difilter kapan saja, langsung dari dalam chat grup.</p>
+          </div>
+        </li>
+        <li>
+          <span class="num">03</span>
+          <div>
+            <h4>Lihat statistik pelanggaran</h4>
+            <p>Pantau siapa saja yang sering melanggar dan riwayat tindakan yang sudah diambil bot.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="cmd-panel">
+      <div class="cmd-bar">
+        <span></span><span></span><span></span>
+        <span class="cmd-title">terminal — sentrybot</span>
+      </div>
+      <div class="cmd-body">
+        <div class="cmd-line"><span class="cmd">/mute</span> <span class="arg">22:00 06:00</span></div>
+        <div class="cmd-line out">Grup dibisukan otomatis 22.00–06.00</div>
+        <div class="cmd-line" style="margin-top:14px;"><span class="cmd">/blacklist add</span> <span class="arg">"judi online"</span></div>
+        <div class="cmd-line out">Kata kunci ditambahkan ke filter</div>
+        <div class="cmd-line" style="margin-top:14px;"><span class="cmd">/laporan</span> <span class="arg">hari-ini</span></div>
+        <div class="cmd-line out">42 pesan diblokir · 3 member diperingatkan</div>
+        <div class="cmd-line" style="margin-top:14px;"><span class="cmd">/status</span></div>
+        <div class="cmd-line out">Bot aktif · uptime 99.98%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HARGA ================= -->
+<section id="harga">
+  <div class="wrap">
+    <div class="section-head" style="margin-left:auto; margin-right:auto; text-align:center;">
+      <span class="section-eyebrow">Paket Harga</span>
+      <h2>Pilih paket sesuai kebutuhan grup kamu</h2>
+      <p style="margin:0 auto;">Semua paket termasuk pemasangan gratis dan dukungan teknis selama masa sewa aktif. Klik tombol pilih untuk order langsung ke admin via WhatsApp.</p>
+    </div>
+
+    <div class="price-grid price-grid-4">
+      <div class="price-card">
+        <div class="price-name">1 Bulan</div>
+        <div class="price-desc">Coba dulu, cocok untuk grup yang baru mulai dijaga.</div>
+        <div class="price-amount"><span class="num">Rp15rb</span><span class="per">/ bulan</span></div>
+        <ul class="price-list">
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Anti-link &amp; anti-spam</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Auto-kick member nakal</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Welcome &amp; farewell otomatis</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Aktif 24/7</li>
+        </ul>
+        <a href="https://wa.me/6282327269044?text=Saya%20mau%20sewa%20Bot%20Jaga%20Grup%20paket%201%20Bulan%20dengan%20harga%2015ribu" target="_blank" rel="noopener" class="price-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.82 12.04 21.82C17.5 21.82 21.95 17.37 21.95 11.91C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.68 2 12.04 2ZM12.04 20.15C10.56 20.15 9.11 19.76 7.84 19L7.54 18.82L4.42 19.64L5.26 16.6L5.06 16.29C4.22 14.97 3.78 13.46 3.78 11.91C3.78 7.37 7.5 3.65 12.05 3.65C14.25 3.65 16.32 4.51 17.87 6.07C19.42 7.63 20.31 9.7 20.3 11.91C20.3 16.46 16.58 20.15 12.04 20.15ZM16.56 13.99C16.31 13.87 15.09 13.27 14.87 13.19C14.65 13.11 14.49 13.07 14.32 13.32C14.16 13.57 13.69 14.12 13.55 14.29C13.41 14.45 13.27 14.47 13.02 14.35C12.77 14.22 11.97 13.96 11.02 13.11C10.28 12.46 9.78 11.65 9.64 11.4C9.5 11.15 9.62 11.02 9.75 10.89C9.86 10.78 10 10.6 10.13 10.46C10.26 10.32 10.31 10.21 10.39 10.05C10.47 9.88 10.43 9.74 10.37 9.62C10.31 9.5 9.81 8.27 9.61 7.78C9.41 7.3 9.21 7.37 9.06 7.36C8.92 7.35 8.76 7.35 8.59 7.35C8.43 7.35 8.16 7.41 7.94 7.66C7.72 7.91 7.09 8.5 7.09 9.73C7.09 10.96 7.96 12.15 8.08 12.31C8.21 12.47 9.81 14.96 12.27 16.04C12.86 16.3 13.32 16.45 13.68 16.57C14.27 16.76 14.81 16.73 15.24 16.67C15.72 16.6 16.71 16.07 16.92 15.48C17.13 14.9 17.13 14.39 17.07 14.29C17.01 14.18 16.81 14.12 16.56 13.99Z"/></svg>
+          Pilih Paket
+        </a>
+        <div class="price-note">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Langsung chat admin
+        </div>
+      </div>
+
+      <div class="price-card">
+        <div class="price-name">2 Bulan</div>
+        <div class="price-desc">Hemat dibanding bayar 2x paket bulanan.</div>
+        <div class="price-amount"><span class="num">Rp25rb</span><span class="per">/ 2 bulan</span></div>
+        <ul class="price-list">
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Semua fitur paket 1 Bulan</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Anti-delete message</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Prioritas dukungan teknis</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Aktif 24/7</li>
+        </ul>
+        <a href="https://wa.me/6282327269044?text=Saya%20mau%20sewa%20Bot%20Jaga%20Grup%20paket%202%20Bulan%20dengan%20harga%2025ribu" target="_blank" rel="noopener" class="price-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.82 12.04 21.82C17.5 21.82 21.95 17.37 21.95 11.91C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.68 2 12.04 2ZM12.04 20.15C10.56 20.15 9.11 19.76 7.84 19L7.54 18.82L4.42 19.64L5.26 16.6L5.06 16.29C4.22 14.97 3.78 13.46 3.78 11.91C3.78 7.37 7.5 3.65 12.05 3.65C14.25 3.65 16.32 4.51 17.87 6.07C19.42 7.63 20.31 9.7 20.3 11.91C20.3 16.46 16.58 20.15 12.04 20.15ZM16.56 13.99C16.31 13.87 15.09 13.27 14.87 13.19C14.65 13.11 14.49 13.07 14.32 13.32C14.16 13.57 13.69 14.12 13.55 14.29C13.41 14.45 13.27 14.47 13.02 14.35C12.77 14.22 11.97 13.96 11.02 13.11C10.28 12.46 9.78 11.65 9.64 11.4C9.5 11.15 9.62 11.02 9.75 10.89C9.86 10.78 10 10.6 10.13 10.46C10.26 10.32 10.31 10.21 10.39 10.05C10.47 9.88 10.43 9.74 10.37 9.62C10.31 9.5 9.81 8.27 9.61 7.78C9.41 7.3 9.21 7.37 9.06 7.36C8.92 7.35 8.76 7.35 8.59 7.35C8.43 7.35 8.16 7.41 7.94 7.66C7.72 7.91 7.09 8.5 7.09 9.73C7.09 10.96 7.96 12.15 8.08 12.31C8.21 12.47 9.81 14.96 12.27 16.04C12.86 16.3 13.32 16.45 13.68 16.57C14.27 16.76 14.81 16.73 15.24 16.67C15.72 16.6 16.71 16.07 16.92 15.48C17.13 14.9 17.13 14.39 17.07 14.29C17.01 14.18 16.81 14.12 16.56 13.99Z"/></svg>
+          Pilih Paket
+        </a>
+        <div class="price-note">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Langsung chat admin
+        </div>
+      </div>
+
+      <div class="price-card featured">
+        <span class="price-tag">Paling Hemat</span>
+        <div class="price-name">Permanen</div>
+        <div class="price-desc">Bayar sekali, selamanya — tanpa pikirkan perpanjangan lagi.</div>
+        <div class="price-amount"><span class="num">Rp50rb</span><span class="per">sekali bayar</span></div>
+        <ul class="price-list">
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Semua fitur lengkap</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Tanpa perpanjangan</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Update fitur gratis</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Aktif 24/7 selamanya</li>
+        </ul>
+        <a href="https://wa.me/6282327269044?text=Saya%20mau%20sewa%20Bot%20Jaga%20Grup%20paket%20Permanen%20dengan%20harga%2050ribu" target="_blank" rel="noopener" class="price-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.82 12.04 21.82C17.5 21.82 21.95 17.37 21.95 11.91C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.68 2 12.04 2ZM12.04 20.15C10.56 20.15 9.11 19.76 7.84 19L7.54 18.82L4.42 19.64L5.26 16.6L5.06 16.29C4.22 14.97 3.78 13.46 3.78 11.91C3.78 7.37 7.5 3.65 12.05 3.65C14.25 3.65 16.32 4.51 17.87 6.07C19.42 7.63 20.31 9.7 20.3 11.91C20.3 16.46 16.58 20.15 12.04 20.15ZM16.56 13.99C16.31 13.87 15.09 13.27 14.87 13.19C14.65 13.11 14.49 13.07 14.32 13.32C14.16 13.57 13.69 14.12 13.55 14.29C13.41 14.45 13.27 14.47 13.02 14.35C12.77 14.22 11.97 13.96 11.02 13.11C10.28 12.46 9.78 11.65 9.64 11.4C9.5 11.15 9.62 11.02 9.75 10.89C9.86 10.78 10 10.6 10.13 10.46C10.26 10.32 10.31 10.21 10.39 10.05C10.47 9.88 10.43 9.74 10.37 9.62C10.31 9.5 9.81 8.27 9.61 7.78C9.41 7.3 9.21 7.37 9.06 7.36C8.92 7.35 8.76 7.35 8.59 7.35C8.43 7.35 8.16 7.41 7.94 7.66C7.72 7.91 7.09 8.5 7.09 9.73C7.09 10.96 7.96 12.15 8.08 12.31C8.21 12.47 9.81 14.96 12.27 16.04C12.86 16.3 13.32 16.45 13.68 16.57C14.27 16.76 14.81 16.73 15.24 16.67C15.72 16.6 16.71 16.07 16.92 15.48C17.13 14.9 17.13 14.39 17.07 14.29C17.01 14.18 16.81 14.12 16.56 13.99Z"/></svg>
+          Pilih Paket
+        </a>
+        <div class="price-note">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Langsung chat admin
+        </div>
+      </div>
+
+      <div class="price-card">
+        <div class="price-name">Permanen + Add Owner</div>
+        <div class="price-desc">Bayar sekali, selamanya, dan kamu pegang kendali penuh atas bot.</div>
+        <div class="price-amount"><span class="num">Rp60rb</span><span class="per">sekali bayar</span></div>
+        <ul class="price-list">
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Semua fitur paket Permanen</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Anda ditambahkan sebagai owner bot</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Kontrol penuh pengaturan bot</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Aktif 24/7 selamanya</li>
+        </ul>
+        <a href="https://wa.me/6282327269044?text=Saya%20mau%20sewa%20Bot%20Jaga%20Grup%20paket%20Permanen%20%2B%20Add%20Owner%20dengan%20harga%2060ribu" target="_blank" rel="noopener" class="price-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.82 12.04 21.82C17.5 21.82 21.95 17.37 21.95 11.91C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.68 2 12.04 2ZM12.04 20.15C10.56 20.15 9.11 19.76 7.84 19L7.54 18.82L4.42 19.64L5.26 16.6L5.06 16.29C4.22 14.97 3.78 13.46 3.78 11.91C3.78 7.37 7.5 3.65 12.05 3.65C14.25 3.65 16.32 4.51 17.87 6.07C19.42 7.63 20.31 9.7 20.3 11.91C20.3 16.46 16.58 20.15 12.04 20.15ZM16.56 13.99C16.31 13.87 15.09 13.27 14.87 13.19C14.65 13.11 14.49 13.07 14.32 13.32C14.16 13.57 13.69 14.12 13.55 14.29C13.41 14.45 13.27 14.47 13.02 14.35C12.77 14.22 11.97 13.96 11.02 13.11C10.28 12.46 9.78 11.65 9.64 11.4C9.5 11.15 9.62 11.02 9.75 10.89C9.86 10.78 10 10.6 10.13 10.46C10.26 10.32 10.31 10.21 10.39 10.05C10.47 9.88 10.43 9.74 10.37 9.62C10.31 9.5 9.81 8.27 9.61 7.78C9.41 7.3 9.21 7.37 9.06 7.36C8.92 7.35 8.76 7.35 8.59 7.35C8.43 7.35 8.16 7.41 7.94 7.66C7.72 7.91 7.09 8.5 7.09 9.73C7.09 10.96 7.96 12.15 8.08 12.31C8.21 12.47 9.81 14.96 12.27 16.04C12.86 16.3 13.32 16.45 13.68 16.57C14.27 16.76 14.81 16.73 15.24 16.67C15.72 16.6 16.71 16.07 16.92 15.48C17.13 14.9 17.13 14.39 17.07 14.29C17.01 14.18 16.81 14.12 16.56 13.99Z"/></svg>
+          Pilih Paket
+        </a>
+        <div class="price-note">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Langsung chat admin
+        </div>
+      </div>
+    </div>
+
+    <div class="public-group-cta">
+      <div class="pgc-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M16 21V19C16 16.79 14.21 15 12 15H6C3.79 15 2 16.79 2 19V21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="9" cy="8" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M22 21V19C22 17.13 20.73 15.56 19 15.11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M16 4.13C17.73 4.59 19 6.15 19 8C19 9.85 17.73 11.41 16 11.87" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </div>
+      <div class="pgc-text">
+        <h4>Mau coba bot-nya dulu sebelum sewa?</h4>
+        <p>Gabung ke grup publik tempat bot ini aktif, lihat langsung cara kerjanya sebelum memutuskan paket.</p>
+      </div>
+      <a href="https://chat.whatsapp.com/JoFKhHOfDDhHnbdVJikxBy" target="_blank" rel="noopener" class="pgc-btn">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5C21 16.75 16.75 21 11.5 21C9.96 21 8.5 20.64 7.21 19.99L3 21L4.21 17.06C3.45 15.71 3 14.16 3 12.5C3 7.25 7.25 3 12.5 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 8L21 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Gabung Grup Publik
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TESTIMONI ================= -->
+<section id="testimoni" style="border-top:1px solid var(--panel-line);">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-eyebrow">Testimoni</span>
+      <h2>Dipercaya pengelola berbagai komunitas</h2>
+      <p>Cerita langsung dari admin grup yang sudah merasakan grupnya jadi lebih tertib.</p>
+    </div>
+
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.6 9H22L16 13.5L18.2 21L12 16.8L5.8 21L8 13.5L2 9H9.4L12 2Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.6 9H22L16 13.5L18.2 21L12 16.8L5.8 21L8 13.5L2 9H9.4L12 2Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.6 9H22L16 13.5L18.2 21L12 16.8L5.8 21L8 13.5L2 9H9.4L12 2Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.6 9H22L16 13.5L18.2 21L12 16.8L5.8 21L8 13.5L2 9H9.4L12 2Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.6 9H22L16 13.5L18.2 21L12 16.8L5.8 21L8 13.5L2 9H9.4L12 2Z"/></svg>
+        </div>
+        <p>Sejak pasang bot ini, grup jualan saya bebas dari spam link judi yang dulu hampir tiap jam muncul. Admin jadi jauh lebih tenang.</p>
+        <div class="testi-person">
+          <div class="testi-avatar">RD</div>
+          <div>
+            <div class="testi-name">Ren Store.</div>
+            <div class="testi-role">Admin Grup Jual Beli</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-stars">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.6 9H22L16 13.5L18.2 21L12 16.8L5.8 21L8 13.5L2 9H9.4L12 2Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.6 9H22L16 13.5L18.2 21L12 16.8L5.8 21L8 13.5L2 9H9.4L12 2Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.6 9H22L16 13.5L18.2 21L12 16.8L5.8 21L8 13.5L2 9H9.4L12 2Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.6 9H22L16 13.5L18.2 21L12 16.8L5.8 21L8 13.5L2 9H9.4L12 2Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.6 9H22L16 13.5L18.2 21L12 16.8L5.8 21L8 13.5L2 9H9.4L12 2Z"/></svg>
+        </div>
+        <p>Komunitas belajar kami 2000 member, sebelumnya kewalahan moderasi manual. Sekarang laporan harian bot sangat membantu pantau aktivitas.</p>
+        <div class="testi-person">
+          <div class="testi-avatar">SA</div>
+          <div>
+            <div class="testi-name">Sor</div>
+            <div class="testi-role">Pengelola Komunitas</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-stars">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.6 9H22L16 13.5L18.2 21L12 16.8L5.8 21L8 13.5L2 9H9.4L12 2Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.6 9H22L16 13.5L18.2 21L12 16.8L5.8 21L8 13.5L2 9H9.4L12 2Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.6 9H22L16 13.5L18.2 21L12 16.8L5.8 21L8 13.5L2 9H9.4L12 2Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.6 9H22L16 13.5L18.2 21L12 16.8L5.8 21L8 13.5L2 9H9.4L12 2Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.6 9H22L16 13.5L18.2 21L12 16.8L5.8 21L8 13.5L2 9H9.4L12 2Z"/></svg>
+        </div>
+        <p>Pemasangannya cepat, kurang dari 10 menit langsung jalan. Tim support juga responsif kalau ada pertanyaan soal pengaturan filter.</p>
+        <div class="testi-person">
+          <div class="testi-avatar">BW</div>
+          <div>
+            <div class="testi-name">axzee JB</div>
+            <div class="testi-role">Owner Bisnis Online</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section id="faq" style="border-top:1px solid var(--panel-line);">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-eyebrow">Pertanyaan Umum</span>
+      <h2>Yang sering ditanyakan</h2>
+    </div>
+
+    <div class="faq-list">
+      <div class="faq-item open">
+        <div class="faq-q">
+          Apakah bot bisa dipakai di Telegram dan WhatsApp?
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="faq-a"><p>Bisa. Kami menyediakan bot untuk kedua platform, dengan fitur dasar yang sama dan beberapa fitur tambahan menyesuaikan kemampuan masing-masing platform.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">
+          Apakah bot perlu dijadikan admin grup?
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="faq-a"><p>Ya, bot memerlukan hak admin terbatas (hapus pesan dan keluarkan member) agar dapat menjalankan fungsi moderasi otomatis dengan baik.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">
+          Bagaimana jika bot salah memblokir pesan?
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="faq-a"><p>Admin dapat meninjau log tindakan bot dan memulihkan pesan atau member yang salah terdeteksi melalui perintah khusus admin.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">
+          Apakah bisa berhenti sewa kapan saja?
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="faq-a"><p>Bisa. Paket sewa berjalan per bulan tanpa kontrak jangka panjang, dan dapat dihentikan sebelum periode berikutnya dimulai.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">
+          Apakah data grup aman?
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="faq-a"><p>Bot hanya memproses pesan untuk keperluan moderasi dan tidak menyimpan isi percakapan pribadi member di luar yang diperlukan untuk laporan.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA BANNER ================= -->
+<section id="kontak">
+  <div class="cta-banner wrap">
+    <div class="cta-text">
+      <h2>Siap bikin grup kamu lebih tertib?</h2>
+      <p>Hubungi kami sekarang, bot bisa langsung aktif di grup kamu hari ini juga.</p>
+    </div>
+    <div class="cta-actions">
+      <a href="https://wa.me/6282327269044?text=Halo%2C%20saya%20mau%20tanya-tanya%20soal%20Bot%20Jaga%20Grup" target="_blank" rel="noopener" class="btn-primary">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5C21 16.75 16.75 21 11.5 21C9.96 21 8.5 20.64 7.21 19.99L3 21L4.21 17.06C3.45 15.71 3 14.16 3 12.5C3 7.25 7.25 3 12.5 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 8L21 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Chat via WhatsApp
+      </a>
+      <a href="#" class="btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M3 7L12 13L21 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Kirim Email
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L4 5V11C4 16.5 7.4 20.7 12 22C16.6 20.7 20 16.5 20 11V5L12 2Z" fill="url(#gradShield2)" stroke="#5b9bff" stroke-width="1"/>
+            <path d="M8.5 12L11 14.5L16 9" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="gradShield2" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#2e6bff"/><stop offset="1" stop-color="#5b9bff"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          SentryBot<span class="dot">.id</span>
+        </div>
+        <p>Jasa sewa bot penjaga grup untuk Telegram dan WhatsApp. Membantu admin menjaga ketertiban tanpa harus memantau layar setiap saat.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Produk</h5>
+        <ul>
+          <li><a href="#fitur">Fitur</a></li>
+          <li><a href="#harga">Harga</a></li>
+          <li><a href="#cara-kerja">Cara Kerja</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Bantuan</h5>
+        <ul>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#kontak">Hubungi Kami</a></li>
+          <li><a href="#testimoni">Testimoni</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="#">Syarat Layanan</a></li>
+          <li><a href="#">Kebijakan Privasi</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 XyziroBot — Semua Privasi Pasti Terjaga.</span>
+      <div class="footer-social">
+        <a href="#" aria-label="Telegram">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M21 4L2 11.5L9 13.5M21 4L18.5 20L9 13.5M21 4L9 13.5M9 13.5V19L12.5 15.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="https://wa.me/6282327269044" target="_blank" rel="noopener" aria-label="WhatsApp">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5C21 16.75 16.75 21 11.5 21C9.96 21 8.5 20.64 7.21 19.99L3 21L4.21 17.06C3.45 15.71 3 14.16 3 12.5C3 7.25 7.25 3 12.5 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#" aria-label="Email">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 7L12 13L21 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Floating WhatsApp button -->
+<a href="https://wa.me/6282327269044?text=Halo%2C%20saya%20mau%20tanya-tanya%20soal%20Bot%20Jaga%20Grup" target="_blank" rel="noopener" class="float-wa" aria-label="Chat WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.82 12.04 21.82C17.5 21.82 21.95 17.37 21.95 11.91C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.68 2 12.04 2ZM12.04 20.15C10.56 20.15 9.11 19.76 7.84 19L7.54 18.82L4.42 19.64L5.26 16.6L5.06 16.29C4.22 14.97 3.78 13.46 3.78 11.91C3.78 7.37 7.5 3.65 12.05 3.65C14.25 3.65 16.32 4.51 17.87 6.07C19.42 7.63 20.31 9.7 20.3 11.91C20.3 16.46 16.58 20.15 12.04 20.15ZM16.56 13.99C16.31 13.87 15.09 13.27 14.87 13.19C14.65 13.11 14.49 13.07 14.32 13.32C14.16 13.57 13.69 14.12 13.55 14.29C13.41 14.45 13.27 14.47 13.02 14.35C12.77 14.22 11.97 13.96 11.02 13.11C10.28 12.46 9.78 11.65 9.64 11.4C9.5 11.15 9.62 11.02 9.75 10.89C9.86 10.78 10 10.6 10.13 10.46C10.26 10.32 10.31 10.21 10.39 10.05C10.47 9.88 10.43 9.74 10.37 9.62C10.31 9.5 9.81 8.27 9.61 7.78C9.41 7.3 9.21 7.37 9.06 7.36C8.92 7.35 8.76 7.35 8.59 7.35C8.43 7.35 8.16 7.41 7.94 7.66C7.72 7.91 7.09 8.5 7.09 9.73C7.09 10.96 7.96 12.15 8.08 12.31C8.21 12.47 9.81 14.96 12.27 16.04C12.86 16.3 13.32 16.45 13.68 16.57C14.27 16.76 14.81 16.73 15.24 16.67C15.72 16.6 16.71 16.07 16.92 15.48C17.13 14.9 17.13 14.39 17.07 14.29C17.01 14.18 16.81 14.12 16.56 13.99Z"/></svg>
+</a>
+
+<script>
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if(!wasOpen) item.classList.add('open');
+    });
+  });
+</script>
+
+</body>
+</html>
